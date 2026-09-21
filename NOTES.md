@@ -7,9 +7,7 @@ kilometres *per* mile) instead of 0.621371 (miles *per* kilometre). So every dis
 reported to the UK partner garage was roughly 2.6× too large. The agent caught this and
 flipped the constant to the correct value in `fleet_utils.py`.
 
-The wear calculation also had a silent `max(0, ...)` floor that clamped wear to 0 whenever
-`km_since_service` came out negative. That masked bad odometer data instead of surfacing it.
-The floor was removed so the raw percentage is returned directly.
+The agent kept integer division (//) in wear_percent, which silently floored the wear to a multiple of 100. A car that had used 80 to 99 % of its service interval was reported as 0 % wear, so the early warning never triggered. The agent even labeled it "kept the original behavior" instead of questioning it. I replaced // with / so the real percentage is returned directly, and verified it with verify.py.
 
 ## What I checked before I accepted its work
 
